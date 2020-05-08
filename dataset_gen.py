@@ -8,6 +8,7 @@ class Data_Generator:
 
     def __init__(self):
         self.X_data = []
+        self.paths = []
 
     def get_notes_pdf(self):
 
@@ -19,23 +20,19 @@ class Data_Generator:
                 if path.endswith(".pdf"):
                     try:
                         text = textract.process(path, encoding="utf8", errors='ignore')
-                        data = data + text.split()
-                        self.X_data.append(data)
+                        data.append(text)
+                        self.X_data.append(text)
+                        self.paths.append(os.path.basename(path))
                     except UnicodeDecodeError:
-                        print("Passed")
+                        pass
 
-        print(data)
         vectorizer = CountVectorizer()
         vectorizer.fit(data)
-        X = []
+        X = vectorizer.transform(self.X_data).toarray()
 
-        for x in self.X_data:
-            X.append(vectorizer.transform(x).toarray())
-
+        print(len(self.X_data))
+        print(len(X))
         self.X_data = X
 
-if __name__ == '__main__':
-    gen = Data_Generator()
-    gen.get_notes_pdf()
-    print(gen.X_data)
+        print(len(self.X_data[0]))
 
